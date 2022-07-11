@@ -2,6 +2,14 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Installation
+
+Make sure to install all packages. You can install the package with `npm` or `yarn`:
+
+```sh
+npm install
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -14,11 +22,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
@@ -29,39 +32,63 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## Components available
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### CorrelationbGraph
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+This component is responsible for generating correlation graphs when provided with valid JSON data.
+The attribute `graphData` accepts a valid JSON object. Make sure that this JSON object has keys `nodes` and `edges` with an array of objects as values. The each object inside this array represents each node/edge.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```js
+<CorrelationGraph graphData={nodes:[], edges:[]} />
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### ContextMenu
 
-## Learn More
+This component provides custom context menu, when user right-clicks on any node. It will be called from `CorrelationGraph` component. 
+The component requires following attributes -
+* x, y : x, y coordinate of canvas, where user has right-clicked. These attributes collectively provides the location of the context menu to get open.
+* isOpen: `boolean` value to notify whether to keep open or close the menu.
+* handleClose: is a method called to close the menu, when user clicks away on the canvas.
+* deleNode: method called to delete the selected node.
+* detacNode: method called to detach the selected node.
+* handleListKeyDown: method called to handle navigation through options, with the help of keyboard.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```js
+<CorrelationGraph 
+    x={canvas.x} 
+    y={canvas.y} 
+    isOpen={showPopUp} 
+    handleClose={handleClose}
+    deleteNode={deleteNode}
+    detachNode={detachNode}
+    handleListKeyDown={handleListKeyDown}
+/>
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Operation that can be performed on Graph
 
-### Code Splitting
+### Delete Node
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+User can delete a Node from the graph.
+Steps:
+* Right click on the Node.
+* Click/select `Delete Node` option from context menu.
 
-### Analyzing the Bundle Size
+### Detach Node
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+User can detach a Node from the graph.
+Steps:
+* Right click on the Node.
+* Click/select `Detach Node` option from context menu.
 
-### Making a Progressive Web App
+### Create Node
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+User can Creat a Node from the graph.
+Steps:
+* Double click on anywhere on the canvas. This creates a new detached node.
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
+## Deployment
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
