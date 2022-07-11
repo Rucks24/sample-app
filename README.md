@@ -34,7 +34,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ## Components available
 
-### CorrelationbGraph
+### CorrelationGraph
 
 This component is responsible for generating correlation graphs when provided with valid JSON data.
 The attribute `graphData` accepts a valid JSON object. Make sure that this JSON object has keys `nodes` and `edges` with an array of objects as values. The each object inside this array represents each node/edge.
@@ -47,12 +47,12 @@ The attribute `graphData` accepts a valid JSON object. Make sure that this JSON 
 
 This component provides custom context menu, when user right-clicks on any node. It will be called from `CorrelationGraph` component. 
 The component requires following attributes -
-* x, y : x, y coordinate of canvas, where user has right-clicked. These attributes collectively provides the location of the context menu to get open.
-* isOpen: `boolean` value to notify whether to keep open or close the menu.
-* handleClose: is a method called to close the menu, when user clicks away on the canvas.
-* deleNode: method called to delete the selected node.
-* detacNode: method called to detach the selected node.
-* handleListKeyDown: method called to handle navigation through options, with the help of keyboard.
+* `x, y`: x, y coordinate of canvas, where user has right-clicked. These attributes collectively provides the location of the context menu to get open.
+* `isOpen`: `boolean` value to notify whether to keep open or close the menu.
+* `handleClose`: is a method called to close the menu, when user clicks away on the canvas.
+* `deleNode`: method called to delete the selected node.
+* `detacNode`: method called to detach the selected node.
+* `handleListKeyDown`: method called to handle navigation through options, with the help of keyboard.
 
 ```js
 <CorrelationGraph 
