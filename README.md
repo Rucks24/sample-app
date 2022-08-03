@@ -88,6 +88,27 @@ User can Creat a Node from the graph.
 Steps:
 * Double click on anywhere on the canvas. This creates a new detached node.
 
+### Download Graph
+
+User can dowload the graph displayed on the screen in local machine.
+Steps:
+* Go to `Save` option on App Bar displayed at top of the window.
+* Select `Download Graph` option.
+
+### Save current version of Graph
+
+User can save current version of the graph displayed on screen.
+Steps:
+* Go to `Save` option on App Bar displayed at top of the window.
+* Select `Save Version` option.
+
+### Switch to specific version of Graph
+
+User can switch or load specific saved version of the graph.
+Steps:
+* Go to `Select Version` option on App Bar displayed at top of the window.
+* Select the version we needed from dropdown.
+
 ## Deployment
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
