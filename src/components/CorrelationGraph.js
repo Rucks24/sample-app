@@ -3,6 +3,9 @@ import Graph from "react-graph-vis";
 import React, { useEffect, useState, useRef } from "react";
 import ContextMenu from "./ContextMenu";
 import { v4 as uuidv4 } from 'uuid';
+import html2canvas from 'html2canvas';
+import TabField from "./TabField";
+// import { getData, updateData } from "../APIs/Actions";
 
 // Object provided to <Graph /> for providing instructions about visual representation of graph.
 const options = {
@@ -10,9 +13,9 @@ const options = {
 		hierarchical: false
 	},
 	edges: {
-		length: 300,
+		// length: 300,
 		color: "white",
-		width: 2,
+		// width: 2,
 		arrows: {to: {
 			type: "bar"
 		},
@@ -45,7 +48,7 @@ function randomColor() {
 const CorrelationGraph = ({graphData}) => {
 
 	// saves selected Nodes DOM location
-  const [dom, setDom] = useState(null);
+  	const [dom, setDom] = useState(null);
 
 	// saves the canvas coordinates where user has initiated right-click event
 	const [canvas, setCanvas] = useState(null);
@@ -55,6 +58,13 @@ const CorrelationGraph = ({graphData}) => {
 
 	const anchorRef = useRef(null);
 	const [showPopUp, setShowPopUp] = useState(false);
+
+	const [graphs, setGraphs] = useState([
+		{
+			name: 'version 1',
+			graph: graphData
+		}
+	]);
 
 	// The state gives every requires information for the graph.
 	const [state, setState] = useState({
@@ -131,9 +141,17 @@ const CorrelationGraph = ({graphData}) => {
 		const selectedNodeId = network.getNodeAt(dom);
 		const newState = {...state};
 		let newEdges = newState.graph.edges;
-		newEdges = newEdges.filter((edge) => {
-			return edge.to !== selectedNodeId && edge.from !== selectedNodeId;
+		newEdges = newEdges.map((edge) => {
+			let newEdge = {
+				...edge
+			}
+			if( edge.to === selectedNodeId || edge.from === selectedNodeId) {
+				newEdge.dashes = true;
+			}
+			return newEdge;
 		});
+		console.log(newEdges);
+
 		setState(({ graph: {nodes}, ...rest }) => {
 			return {
 				graph: {
@@ -146,7 +164,36 @@ const CorrelationGraph = ({graphData}) => {
 			}
 		});
 		setShowPopUp(false);
-		console.log('inside delete node end');
+		console.log('inside detach node end');
+	}
+
+	
+
+	// will be called when user selects a existing version of graph from list
+	// it will display that version of graph
+	const loadVersionOfGraph = (versionName) => {
+		const newState = {...state};
+		console.log('Version Name = ', versionName)
+		const version = graphs.find((obj) => obj.name === versionName);
+		console.log('Selected version = ', version);
+		newState.graph = version.graph;
+		setState(newState);
+
+		const id = uuidv4().toString();
+		setKey(id);
+	}
+
+	// save current changed graph to list of versions i.e. save the json data of graph
+	const saveCurrentVersionOfGraph = () => {
+		const newGrpahs = [...graphs];
+		const newData = {
+			name: `version ${graphs.length+1}`,
+			graph: state.graph
+		}
+		console.log('Saving the new version == ', newData);
+		newGrpahs.push(newData);
+		setGraphs(newGrpahs);
+		console.log('NewGraphs == ', newGrpahs);
 	}
 
 	// close context menu when user clicks on an empty canvas space
@@ -181,21 +228,63 @@ const CorrelationGraph = ({graphData}) => {
   }, [showPopUp]);
     
   const { graph, events, network } = state;
+  const downloadGraph = async (e) => {
+	console.log('Downloading Image...');
+	let screenImage = document.getElementById('canvasImg');
+	const canvas = await html2canvas(screenImage);
+	const image = canvas.toDataURL("image/png", 1.0);
+	const fakeLink = window.document.createElement("a");
+	fakeLink.style = "display:none;";
+	fakeLink.download = 'downloadedImageGraph';
+
+	fakeLink.href = image;
+
+	document.body.appendChild(fakeLink);
+	fakeLink.click();
+	document.body.removeChild(fakeLink);
+
+	fakeLink.remove();
+
+	// network.once("afterDrawing", function(ctx) {
+	// 	var dataURL = ctx.canvas.toDataURL("image/png", 1.0);
+	// 	// window.location.href = dataURL;
+	// 	console.log('Downloading graph...');
+	// 	// document.getElementById('canvasImg').href = dataURL;
+
+	// 	const fakeLink = window.document.createElement("a");
+	// 	fakeLink.style = "display:none;";
+	// 	fakeLink.download = 'downloadedImageGraph';
+
+	// 	fakeLink.href = dataURL;
+
+	// 	document.body.appendChild(fakeLink);
+	// 	fakeLink.click();
+	// 	document.body.removeChild(fakeLink);
+
+	// 	fakeLink.remove();
+	// });
+  }
 
 	return (
 		<div style={{ height: '100%', width: '100%', backgroundColor: 'black' }}>
-			<h1>Correlation graph</h1>
-		
-			<Graph 
-				key={key}
-				graph={graph} 
-				options={options} 
-				events={events} 
-				getNetwork={(nt) => {
-					setState({...state, network: nt});
-				}}
-				style={{ height: '100vh' }} 
+			<TabField
+				saveCurrentVersionOfGraph={saveCurrentVersionOfGraph}
+				downloadGraph={downloadGraph}
+				loadVersionOfGraph={loadVersionOfGraph}
+				graphs={graphs}
 			/>
+			<div style={{ height: '100%', width: '100%', backgroundColor: 'black' }} id="canvasImg">
+				<Graph 
+					key={key}
+					graph={graph} 
+					options={options} 
+					events={events} 
+					getNetwork={(nt) => {
+						setState({...state, network: nt});
+					}}
+					style={{ height: '100vh' }}
+				/>
+			</div>
 			{showPopUp ? 
 				<ContextMenu 
 					x={canvas.x} 
